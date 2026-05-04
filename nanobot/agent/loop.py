@@ -449,6 +449,8 @@ class AgentLoop:
                         tool.set_context(channel, chat_id, metadata=metadata, session_key=session_key)
                     elif name == "message":
                         tool.set_context(channel, chat_id, message_id, metadata=metadata)
+                    elif name == "my":
+                        tool.set_context(channel, chat_id, session_key=effective_key)
                     else:
                         tool.set_context(channel, chat_id)
 
@@ -934,6 +936,7 @@ class AgentLoop:
                 session_summary=pending,
                 current_role=current_role,
                 sender_id=msg.sender_id,
+                focus=session.metadata.get("_focus"),
             )
             final_content, _, all_msgs, stop_reason, _ = await self._run_agent_loop(
                 messages, session=session, channel=channel, chat_id=chat_id,
@@ -1032,6 +1035,7 @@ class AgentLoop:
                 channel=msg.channel,
                 chat_id=self._runtime_chat_id(msg),
                 sender_id=msg.sender_id,
+                focus=session.metadata.get("_focus"),
             )
 
         async def _bus_progress(
